@@ -1,6 +1,11 @@
 import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { jwtDecode, JwtPayload } from "jwt-decode";
+
+
+interface jwtExtendI extends JwtPayload {
+  id:string
+}
 export const authOptions: NextAuthOptions = {
 
 
@@ -23,12 +28,12 @@ export const authOptions: NextAuthOptions = {
           },
         );
         const data = await res.json();
-        const decodedToken = jwtDecode<JwtPayload>(data.token);
+        const decodedToken = jwtDecode<jwtExtendI>(data.token);
         // console.log(decodedToken, "decodedToken");
 
         if (data.message === "success") {
           return {
-            id: decodedToken.id as string,
+            id: decodedToken.id ?? decodedToken.sub ?? "",
             user: data.user,
             token: data.token,
           };
